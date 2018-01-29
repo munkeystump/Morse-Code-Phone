@@ -13,11 +13,11 @@ byte colPins[COLS] = { 5, 4, 3 };
 
 int speaker = 11; //phone speaker pin
 String guess; //string of current guess
-String pass = "999"; //correct password
+String pass = "533"; //correct password
 int dotLen = 210; // length of dash in morse code
 int dashLen = dotLen * 3;
 int hz = 500; // pitch of morse code tone
-char stringToMorseCode[] = "message"; // message to be played by morse code
+char stringToMorseCode[] = "slay"; // message to be played by morse code
 int handset = 2;
 
 //Password password = Password( pass ); 
@@ -43,6 +43,9 @@ void loop() {
   }
   else{
   noTone(speaker);
+  //below for debug only
+  //Serial.println("Receiver down");
+  guess = "";
   }
 }
 
@@ -70,19 +73,26 @@ void keypadEvent(KeypadEvent eKey) {
       tone(speaker, 90);
 }
 void playSuccessTone() {
-    Serial.println("Accepted");
-    noTone(speaker);
-    tone(speaker, 1500, 100); 
-      delay (100); 
-      noTone (speaker);
-      delay (180); 
-      tone(speaker, 1500, 100); 
-      delay (100); 
-      noTone (speaker);
-      delay (80); 
-      tone(speaker, 1800, 650); 
-      delay (650); 
-      noTone (speaker); // this section makes the "you made it" beeps 
+  //play a crappy ringing sound once (remove comment loop for more times
+    Serial.println("Accepted - playing message");
+    //for (int rings=0; rings < 2; rings++){
+    for (int j=0; j < 2; j++){
+      for (int i=0; i < 20; i++){
+        noTone(speaker);
+        tone(speaker, 450, 25); 
+        delay (35); 
+      }delay(100);
+    //}delay(900);
+    }
+      //noTone (speaker);
+      //delay (180); 
+      //tone(speaker, 1500, 100); 
+      //delay (100); 
+      //noTone (speaker);
+      //delay (80); 
+      //tone(speaker, 1800, 650); 
+      //delay (650); 
+      //noTone (speaker); // this section makes the "you made it" beeps 
 
       noTone (speaker);
       delay (1000); // pause before morse codes
@@ -91,21 +101,27 @@ void playSuccessTone() {
 void playFailTone() {
     Serial.println("Denied");
     noTone (speaker);
-    delay (150); 
-    tone(speaker, 180, 450); 
-    delay (450); // this section makes the busy signal (wrong number)
+    delay (150);
+    tone(speaker, 913, 380); 
+    delay (380); // this section makes the busy signal (wrong number)
+    tone(speaker, 1428, 380);
+    delay (380); 
+    tone(speaker, 1776, 380);
+    delay (380); 
 }
 
 void morseEncoder(){
 for (int i = 0; i < sizeof(stringToMorseCode) - 1; i++)
   {
+  if(digitalRead(handset)){
+    break;}
     // Get the character in the current position
   char tmpChar = stringToMorseCode[i];
   // Set the case to lower case
   tmpChar = toLowerCase(tmpChar);
   // Call the subroutine to get the morse code equivalent for this character
   GetChar(tmpChar);
-  delay(dashLen);
+  delay(dashLen*2);
   }
 }
 void MorseDash(){
